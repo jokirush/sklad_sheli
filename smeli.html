@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Склад наёмного отряда «Шмели»</title>
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=IM+Fell+English&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--ink:#2b1a0e;--gold:#e8b53a;--paper:#ecd9aa;--wood:#4a2c17;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#3a2414,#150c06 70%);color:var(--paper);font-family:'IM Fell English',Georgia,serif;min-height:100vh}
+h1{font-family:'MedievalSharp',Georgia,serif;text-align:center;color:var(--gold);font-size:clamp(22px,4.5vw,42px);margin:18px 10px 4px;text-shadow:0 2px 0 #000,0 0 18px #e8b53a66;font-weight:400}
+.sub{text-align:center;opacity:.75;margin:0 10px 12px;font-size:15px}
+.tabs{display:flex;gap:10px;justify-content:center;margin-bottom:10px}
+button{font-family:inherit;cursor:pointer}
+.tab{background:linear-gradient(#6b4326,#3e2412);color:var(--paper);border:2px solid #a77a3a;border-radius:6px;padding:8px 18px;font-size:18px;font-family:'MedievalSharp',serif}
+.tab.on{background:linear-gradient(#c99a3a,#8a5f1c);color:#1d1005;border-color:#f0cf7a}
+.wrap{max-width:1180px;margin:0 auto;padding:0 10px 30px}
+.map{border:8px solid #5a3718;border-image:linear-gradient(#7a4f27,#3a2210) 1;box-shadow:0 0 30px #000;background:#222;line-height:0}
+svg{width:100%;height:auto;display:block}
+.c{cursor:pointer}.c:hover .body{filter:brightness(1.3)}
+.c .body{stroke:#d9a53a;stroke-width:3}
+.lbl{font:15px 'MedievalSharp',serif;fill:#f6e7bd;text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:#1a0d04;stroke-width:3px}
+.dl{font:16px 'MedievalSharp',serif;fill:#e9d8ab99;text-anchor:middle;pointer-events:none}
+.hint{text-align:center;opacity:.7;margin:10px;font-size:15px}
+#ov{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:12px;z-index:5}
+#ov.on{display:flex}
+#pn{background:linear-gradient(#f0e0b4,#d8c08a);color:var(--ink);width:min(560px,100%);max-height:92vh;overflow:auto;border:6px solid #5a3718;border-radius:10px;padding:16px 18px;box-shadow:0 0 40px #000}
+#pn h2{font-family:'MedievalSharp',serif;margin:0 0 8px;font-weight:400;font-size:26px;display:flex;justify-content:space-between;gap:8px}
+#pn h3{font-family:'MedievalSharp',serif;margin:14px 0 6px;font-size:18px;border-bottom:1px solid #7a5a2a88;font-weight:400}
+.x{background:none;border:0;font-size:26px;color:var(--ink)}
+.gold{display:flex;align-items:center;gap:8px}
+.coin{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b0,#e8b53a 55%,#8a5f1c);border:2px solid #6b4a10;display:inline-block}
+input{font:inherit;font-size:16px;padding:6px 8px;border:2px solid #8a6a38;border-radius:5px;background:#fbf3d8;color:var(--ink);min-width:0}
+#gv{width:100px;font-size:22px;text-align:center}
+.b{background:linear-gradient(#7a4f27,#4a2c17);color:#f6e7bd;border:2px solid #2b1a0e;border-radius:5px;padding:6px 12px;font-size:16px}
+.pl{display:flex;flex-wrap:wrap;gap:8px}
+.plate{background:linear-gradient(#a8742f,#7a4f1f);color:#fff0c4;border:2px solid #3d2410;border-radius:4px;padding:3px 10px;font-family:'MedievalSharp',serif;position:relative;box-shadow:0 2px 0 #3d2410}
+.plate button{background:none;border:0;color:#ffd9a0;margin-left:4px;padding:0}
+.row{display:flex;gap:6px;margin-top:6px}.row input{flex:1}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px dotted #7a5a2a88}
+li b{font-weight:400;color:#7a2a10}li button{background:none;border:0;color:#7a2a10;font-size:18px}
+.em{opacity:.6;font-style:italic}
+#st{font-size:13px;opacity:.7;margin-top:10px}
+</style></head><body>
+<h1>Склад наёмного отряда «Шмели»</h1>
+<p class="sub">Выбирай этаж, нажимай на сундук, бочку или шкаф — и складывай свои пожитки</p>
+<div class="tabs"><button class="tab on" data-f="1">Таверна</button><button class="tab" data-f="0">Подвал</button></div>
+<div class="wrap"><div class="map"><svg id="m" viewBox="0 0 1280 700"></svg></div>
+<p class="hint">Контейнеры с золотой каймой открываются по клику. Монета — золото внутри, табличка — владельцы.</p></div>
+<div id="ov"><div id="pn">
+<h2><span id="pt"></span><button class="x" id="cl">✕</button></h2>
+<h3>Золото в хранилище</h3>
+<div class="gold"><span class="coin"></span><button class="b" id="g-">−</button><input id="gv" type="number" min="0"><button class="b" id="g+">+</button></div>
+<div class="row"><input id="gd" type="number" placeholder="Сумма"><button class="b" id="gp">Положить</button><button class="b" id="gm">Взять</button></div>
+<h3>Таблички с именами</h3><div class="pl" id="pls"></div>
+<div class="row"><input id="pi" placeholder="Имя на табличке"><button class="b" id="pa">Повесить</button></div>
+<h3>Что внутри</h3><ul id="its"></ul>
+<div class="row"><input id="iw" placeholder="Чьё"><input id="ii" placeholder="Что сложили"><button class="b" id="ia">Сложить</button></div>
+<div id="st"></div>
+</div></div>
+<script>
+const W='#7a4a22',E=(a)=>a;
+const F={
+1:{bg:'wood',name:'Таверна',
+ deco:`<path d="M470,10 A142,176 0 0 0 754,10 Z" fill="#3b3a3a" stroke="#111" stroke-width="5"/><path d="M540,10 A72,95 0 0 0 684,10Z" fill="#ff8a1e" opacity=".75"/><text class="dl" x="612" y="70">Камин</text>
+ <circle cx="800" cy="200" r="68" fill="#6b4a2a" stroke="#2b1a0e" stroke-width="4"/><circle cx="1183" cy="292" r="61" fill="#6b4a2a" stroke="#2b1a0e" stroke-width="4"/><circle cx="888" cy="495" r="68" fill="#6b4a2a" stroke="#2b1a0e" stroke-width="4"/>
+ <g fill="#3d2410" stroke="#1a0d04" stroke-width="3"><rect x="873" y="148" width="42" height="42" transform="rotate(45 894 169)"/><rect x="848" y="262" width="46" height="46" transform="rotate(45 871 285)"/><rect x="1090" y="198" width="46" height="46" transform="rotate(45 1113 221)"/><rect x="1090" y="328" width="46" height="46" transform="rotate(45 1113 351)"/><rect x="785" y="406" width="46" height="46" transform="rotate(45 808 429)"/><rect x="945" y="410" width="46" height="46" transform="rotate(45 968 433)"/></g>
+ <rect x="320" y="305" width="126" height="380" fill="#5b3a1d" stroke="#1a0d04" stroke-width="5"/><text class="dl" x="383" y="480">Барная</text><text class="dl" x="383" y="500">стойка</text>
+ <circle cx="100" cy="603" r="72" fill="#3e2a55" stroke="#1a0d04" stroke-width="5"/><text class="dl" x="100" y="598">Алхимический</text><text class="dl" x="100" y="618">стол</text>
+ <text class="dl" x="800" y="204">Стол</text><text class="dl" x="1183" y="296">Стол</text><text class="dl" x="888" y="499">Стол</text>`,
+ stairs:[168,10,84,70,'Спуск ↓',0],
+ c:[['b1','Бочка I','r',117,65,38],['b2','Бочка II','r',347,63,38],['b3','Бочка III','r',62,140,40],['b4','Бочка IV','r',65,482,40],['b5','Бочка V','r',234,632,40],
+ ['u1','Буфет (запад)','x',12,197,102,235],['u2','Буфет (север)','x',823,22,293,70],['t1','Тумба','x',1156,110,102,96],['k1','Комод','x',1137,380,120,218],['s1','Сундук','s',850,580,213,106]]},
+0:{bg:'stone',name:'Подвал',
+ deco:`<rect x="15" y="228" width="182" height="250" fill="#3a352f" stroke="#111" stroke-width="5"/><rect x="358" y="20" width="120" height="120" fill="#3a352f" stroke="#111" stroke-width="5"/><rect x="536" y="18" width="293" height="78" fill="#3a352f" stroke="#111" stroke-width="5"/><rect x="1155" y="13" width="100" height="267" fill="#3a352f" stroke="#111" stroke-width="5"/>
+ <rect x="925" y="336" width="323" height="162" rx="8" fill="#5b2a2a" stroke="#111" stroke-width="5"/><rect x="940" y="350" width="70" height="134" rx="8" fill="#e8d9b0" opacity=".85"/><text class="dl" x="1100" y="425">Кровать</text>`,
+ stairs:[168,5,84,70,'Подъём ↑',1],
+ c:[['c1','Бочка I','r',90,67,45],['c2','Бочка II','r',97,172,48],['c3','Бочка III','r',307,75,45],['v1','Ведро','r',611,55,38],['k1','Корзина I','r',913,65,46],['k2','Корзина II','r',1018,68,42],
+ ['y1','Ящик','x',22,240,75,98],['d1','Бочонок 1','r',1222,41,20],['d2','Бочонок 2','r',1183,84,20],['d3','Бочонок 3','r',1224,124,20],['d4','Бочонок 4','r',1181,163,20],['d5','Бочонок 5','r',1226,205,20],['d6','Бочонок 6','r',1181,242,20],
+ ['s1','Сундук','s',323,568,267,104],['e1','Бочка IV','r',741,612,65],['e2','Бочка V','r',888,610,65],['e3','Бочка VI','r',1031,610,62],['e4','Бочка VII','r',1174,615,65]]}};
+const esc=x=>String(x).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function tags(pl,cx,cy,small,r){if(!pl.length)return'';const sh=pl.slice(0,2),more=pl.length-2;let o='';
+ const one=(n,x,y,anc)=>{const t=n.length>12?n.slice(0,11)+'…':n,w=t.length*7.4+14,rx=anc=='end'?x-w:x-w/2;return `<rect x="${rx}" y="${y-12}" width="${w}" height="18" rx="3" fill="#b8792f" stroke="#2b1a0e" stroke-width="2"/><circle cx="${rx+6}" cy="${y-3}" r="1.6" fill="#2b1a0e"/><text x="${rx+w/2+2}" y="${y+1}" text-anchor="middle" font-size="13" fill="#fff2cc" font-family="'MedievalSharp',serif">${esc(t)}</text>`;};
+ if(small){sh.forEach((n,i)=>o+=one(n,cx-r-8-0,cy+4+i*20-(sh.length-1)*10,'end'));if(more>0)o+=one('+'+more,cx-r-8,cy+4+sh.length*20-(sh.length-1)*10,'end');}
+ else{const L=[...sh];if(more>0)L.push('+'+more);L.forEach((n,i)=>o+=one(n,cx,cy+10+i*20));}
+ return o;}
+let fl=1,cur=null,S={},db=null;
+const key=(f,id)=>'f'+f+'_'+id;
+const get=(f,id)=>S[key(f,id)]||{gold:0,plates:[],items:[]};
+const svg=document.getElementById('m');
+function draw(){
+ const d=F[fl];let h=`<defs><pattern id="wood" width="1280" height="70" patternUnits="userSpaceOnUse"><rect width="1280" height="70" fill="#8a5a2c"/><rect y="0" width="1280" height="4" fill="#4a2c14"/><g stroke="#5e3a1b" stroke-width="2"><path d="M0 35H1280M200 0V35M520 0V35M860 0V35M1100 0V35M90 35V70M390 35V70M700 35V70M980 35V70"/></g></pattern>
+ <pattern id="stone" width="120" height="80" patternUnits="userSpaceOnUse"><rect width="120" height="80" fill="#55524d"/><path d="M0 0H120M0 40H120M0 80H120M60 0V40M30 40V80M90 40V80" stroke="#2b2927" stroke-width="3" fill="none"/></pattern></defs>
+ <rect width="1280" height="700" fill="url(#${d.bg})"/><rect x="3" y="3" width="1274" height="694" fill="none" stroke="#1a0d04" stroke-width="8"/>`+d.deco;
+ const s=d.stairs;h+=`<g class="c" data-go="${s[5]}"><rect x="${s[0]}" y="${s[1]}" width="${s[2]}" height="${s[3]}" fill="#1c4c7a" stroke="#58b4ff" stroke-width="4"/><path d="M${s[0]+8} ${s[1]+20}H${s[0]+s[2]-8}M${s[0]+8} ${s[1]+36}H${s[0]+s[2]-8}M${s[0]+8} ${s[1]+52}H${s[0]+s[2]-8}" stroke="#9bd4ff" stroke-width="3"/><text class="lbl" x="${s[0]+s[2]/2}" y="${s[1]+s[3]+18}">${s[4]}</text></g>`;
+ for(const c of d.c){const[id,n,t]=c,g=get(fl,id),has=g.gold>0,pl=g.plates.length,its=g.items.length;let b,cx,cy;
+  if(t=='r'){const[,,,x,y,r]=c;cx=x;cy=y;b=`<circle class="body" cx="${x}" cy="${y}" r="${r}" fill="${W}"/><circle cx="${x}" cy="${y}" r="${r*.72}" fill="#5e3818" stroke="#2b1a0e" stroke-width="2"/><circle cx="${x}" cy="${y}" r="${r*.4}" fill="#3a200c"/><circle cx="${x}" cy="${y}" r="${r*.9}" fill="none" stroke="#c9a14a" stroke-width="2" stroke-dasharray="3 6"/>`;}
+  else{const[,,,x,y,w,hh]=c;cx=x+w/2;cy=y+hh/2;b=`<rect class="body" x="${x}" y="${y}" width="${w}" height="${hh}" rx="${t=='s'?14:6}" fill="${t=='s'?'#6a3b17':'#5a3a22'}"/><path d="M${x+6} ${y+hh*.3}H${x+w-6}M${x+6} ${y+hh*.7}H${x+w-6}" stroke="#2b1a0e" stroke-width="3"/>${t=='s'?`<rect x="${cx-12}" y="${y+hh*.3-10}" width="24" height="26" rx="4" fill="#e8b53a" stroke="#6b4a10" stroke-width="2"/>`:''}`;}
+  const bx=t=='r'?c[3]+c[5]*.7:c[3]+c[5]-4,by=t=='r'?c[4]-c[5]*.7:c[4]+6;
+  const big=t=='r'&&c[5]<25;
+  h+=`<g class="c" data-id="${id}">${b}${big?'':`<text class="lbl" x="${cx}" y="${pl?cy-6:cy+5}">${n}</text>`}`+
+  (has?`<circle cx="${bx}" cy="${by}" r="13" fill="#e8b53a" stroke="#6b4a10" stroke-width="2"/><text x="${bx}" y="${by+5}" text-anchor="middle" font-size="${g.gold>999?9:13}" font-weight="bold" fill="#3a2406" font-family="serif">${g.gold>9999?'∞':g.gold}</text>`:'')+
+  tags(g.plates,cx,cy,big,t=='r'?c[5]:0)+
+  (its?`<text x="${bx-4}" y="${by+(big?30:42)}" font-size="13" fill="#fff" stroke="#000" stroke-width=".5" font-family="serif">📦${its}</text>`:'')+`<title>${n}</title></g>`;}
+ svg.innerHTML=h;}
+svg.addEventListener('click',e=>{const g=e.target.closest('[data-id],[data-go]');if(!g)return;if(g.dataset.go!==undefined)setF(+g.dataset.go);else open(g.dataset.id);});
+function setF(f){fl=f;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',+t.dataset.f==f));draw();}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>setF(+t.dataset.f));
+const $=id=>document.getElementById(id);
+let curF=1;
+function open(id){cur=id;curF=fl;$('pt').textContent=F[fl].name+' — '+F[fl].c.find(c=>c[0]==id)[1];$('ov').classList.add('on');panel(true);
+ try{$('iw').value=localStorage.getItem('nm')||''}catch(e){}}
+function close(){$('ov').classList.remove('on');cur=null;}
+$('cl').onclick=close;$('ov').onclick=e=>{if(e.target.id=='ov')close();};
+function panel(all){if(!cur)return;const g=get(curF,cur);if(all||document.activeElement!==$('gv'))$('gv').value=g.gold;
+ const p=$('pls');p.innerHTML='';g.plates.forEach((n,i)=>{const s=document.createElement('span');s.className='plate';s.textContent=n;const b=document.createElement('button');b.textContent='✕';b.onclick=()=>mut(x=>x.plates.splice(i,1));s.append(b);p.append(s);});
+ if(!g.plates.length)p.innerHTML='<span class="em">Табличек пока нет</span>';
+ const u=$('its');u.innerHTML='';g.items.forEach((it,i)=>{const l=document.createElement('li');const t=document.createElement('span');const b=document.createElement('b');b.textContent=it.who||'—';t.append(b,' — '+it.what);const x=document.createElement('button');x.textContent='✕';x.title='Забрать';x.onclick=()=>mut(q=>q.items.splice(i,1));l.append(t,x);u.append(l);});
+ if(!g.items.length)u.innerHTML='<li class="em">Пусто. Самое время что-нибудь сложить.</li>';
+ $('st').textContent=db?'Записи общие: их видят все бойцы отряда.':'Совместное хранилище недоступно — записи сохранятся только пока открыта страница.';}
+function mut(fn){if(!cur)return;const k=key(curF,cur),g=JSON.parse(JSON.stringify(get(curF,cur)));fn(g);g.gold=Math.max(0,Math.floor(+g.gold||0));S[k]=g;draw();panel(true);
+ if(db)db.doc('bags/'+k).set(g).catch(()=>{$('st').textContent='Не удалось сохранить — проверьте доступ.';});}
+$('g-').onclick=()=>mut(g=>g.gold--);$('g+').onclick=()=>mut(g=>g.gold++);
+$('gv').onchange=()=>mut(g=>g.gold=+$('gv').value);
+$('gp').onclick=()=>{const v=Math.floor(+$('gd').value);if(v>0)mut(g=>g.gold+=v);$('gd').value='';};
+$('gm').onclick=()=>{const v=Math.floor(+$('gd').value);if(v>0)mut(g=>g.gold-=v);$('gd').value='';};
+$('pa').onclick=()=>{const v=$('pi').value.trim();if(v)mut(g=>g.plates.push(v.slice(0,40)));$('pi').value='';};
+$('ia').onclick=()=>{const w=$('iw').value.trim().slice(0,40),t=$('ii').value.trim().slice(0,120);if(!t)return;try{localStorage.setItem('nm',w)}catch(e){}mut(g=>g.items.push({who:w,what:t}));$('ii').value='';};
+[['pi','pa'],['ii','ia'],['gd','gp']].forEach(([i,b])=>$(i).addEventListener('keydown',e=>{if(e.key=='Enter')$(b).click();}));
+draw();
+(async()=>{try{if(!window.claude||!claude.use)return;db=await claude.use('db');if(!db)return;
+ db.collection('bags').onSnapshot(s=>{S={};s.docs.forEach(d=>{S[d.id]=JSON.parse(JSON.stringify(d.data()||{}));});draw();panel(false);},()=>{db=null;panel(false);});
+ }catch(e){db=null;}})();
+</script></body></html>
